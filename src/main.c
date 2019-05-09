@@ -6,12 +6,41 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/types.h>
+
+#define MAX 4
 
 int main() {
+  pid_t pid[MAX];
+  int n, count = 0, ans = 0;
+  char c;
 
-  int x, y;
+  while(c = getchar() != '\n')
+  {
+    if (c == ' ')
+      c = getchar();
+    n = atoi(c);
+    if (count < 4)
+    {
+      pid[count]= fork();
+    } else {
+      waitpid(pid[count % MAX], NULL, 0);
+      pid[count % MAX] = fork();
+    }
+    if (pid[count % MAX] == 0)
+    {
+      is_prime(n);
+      exit(0);
+    }
+    count++;
+  }
 
-  scanf("%d %d\n", &x, &y);
-  printf("%d\n", x + 200);
+  for (int i = 0; i < MAX; i++)
+    waitpid(pid[i], NULL, 0);
+
+  printf("%d\n", ans);
   return 0;
 }
