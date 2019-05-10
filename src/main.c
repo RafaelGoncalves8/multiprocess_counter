@@ -32,7 +32,7 @@ int * alloc_mmap(int n)
   int protection = PROT_READ | PROT_WRITE;
   int visibility = MAP_SHARED | MAP_ANON;
 
-  ans = (int*) mmap(NULL, sizeof(int), protection, visibility, 0, 0);
+  ans = (int*) mmap(NULL, sizeof(int)*n, protection, visibility, 0, 0);
   if ((int) ans == -1)
   {
     printf("Erro de alocacao.");
@@ -46,37 +46,36 @@ int * alloc_mmap(int n)
 int main() {
   pid_t pid[N];
   int *aux[N];
-  int nums[N];
+  int nums[MAX];
   int n, ans, counter = 0;
   char c;
 
-  while((c = getchar()) != '\n')
-  {
-    printf("%c", c);
-    if (c == ' ')
-      c = getchar();
-    else
-      nums[counter++] = atoi(c);
+  do {
+    scanf("%d", &nums[counter++]);
   }
+  while((c = getchar()) != '\n');
+
+  /* for (int i = 0; i < counter; i++) */
+  /*   printf("%d ", nums[i]); */
 
   for (int i = 0; i < N; i++)
   {
     pid[i] = fork();
-    printf("Antes do mmap\n");
     aux[i] = alloc_mmap(counter/N);
-    printf("Depois do mmap\n");
 
     for (int j = 0; j < counter/N; j++)
-      aux[i][j] = nums[(j+1)*i];
+      (*aux[i])[j] = nums[(j+1)*i];
 
     if (pid[i] == 0)
     {
-      printf("Estou no processo filho\n");
       for (int j = 0; j < counter/N; j++)
       {
         n = is_prime(aux[i][j]);
-        aux[i][j] = n;
+        printf("%d(%d) ", aux[i][j], n);
+        (*(aux[i]))[j] = n;
       }
+      printf("\n");
+      exit(0);
     }
   }
 
@@ -86,7 +85,10 @@ int main() {
   ans = 0;
   for (int i = 0; i < N; i++)
     for (int j = 0; j < counter/N; j++)
-      ans += aux[i][j];
+    {
+      ans += *(aux[i])[j];
+      printf("%d ", aux[i][j]);
+    }
 
   printf("%d\n", ans);
   return 0;
