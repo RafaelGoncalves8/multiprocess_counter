@@ -50,8 +50,9 @@ int main() {
   int n, ans, counter = 0;
   char c;
 
-  while(c = getchar() != '\n')
+  while((c = getchar()) != '\n')
   {
+    printf("%c", c);
     if (c == ' ')
       c = getchar();
     else
