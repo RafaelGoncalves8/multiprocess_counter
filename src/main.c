@@ -69,12 +69,11 @@ int main() {
 
     if (pid[i] == 0)
     {
-      while (aux < counter)
+      while (*aux < counter)
       {
         *aux++;
-        *ans += is_prime(nums[aux]);
+        *ans += is_prime(nums[*aux]);
       }
-      exit(0);
     }
   }
 
