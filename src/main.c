@@ -64,7 +64,7 @@ int main() {
     aux[i] = alloc_mmap(counter/N);
 
     for (int j = 0; j < counter/N; j++)
-      (*aux[i])[j] = nums[(j+1)*i];
+      *(aux[i] + j) = nums[(j+1)*i];
 
     if (pid[i] == 0)
     {
@@ -72,7 +72,7 @@ int main() {
       {
         n = is_prime(aux[i][j]);
         printf("%d(%d) ", aux[i][j], n);
-        (*(aux[i]))[j] = n;
+        *(aux[i] + j) = n;
       }
       printf("\n");
       exit(0);
@@ -86,8 +86,8 @@ int main() {
   for (int i = 0; i < N; i++)
     for (int j = 0; j < counter/N; j++)
     {
-      ans += *(aux[i])[j];
-      printf("%d ", aux[i][j]);
+      ans += *(aux[i] + j);
+      printf("%d ", *(aux[i] + j));
     }
 
   printf("%d\n", ans);
