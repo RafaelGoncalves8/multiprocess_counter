@@ -45,34 +45,36 @@ int * alloc_mmap(int n)
 
 int main() {
   pid_t pid[N];
-  int n, counter = 0;
+  int *aux[N];
+  int nums[N];
+  int n, ans, counter = 0;
   char c;
-  int *nums;
-  int *aux;
-  int *ans;
-
-  nums = alloc_mmap(MAX);
-  ans = alloc_mmap(1);
-  aux = alloc_mmap(1);
-  *aux = 0;
 
   while(c = getchar() != '\n')
   {
     if (c == ' ')
       c = getchar();
-    nums[counter++] = atoi(c);
+    else
+      nums[counter++] = atoi(c);
   }
 
   for (int i = 0; i < N; i++)
   {
     pid[i] = fork();
+    printf("Antes do mmap\n");
+    aux[i] = alloc_mmap(counter/N);
+    printf("Depois do mmap\n");
+
+    for (int j = 0; j < counter/N; j++)
+      aux[i][j] = nums[(j+1)*i];
 
     if (pid[i] == 0)
     {
-      while (*aux < counter)
+      printf("Estou no processo filho\n");
+      for (int j = 0; j < counter/N; j++)
       {
-        *aux++;
-        *ans += is_prime(nums[*aux]);
+        n = is_prime(aux[i][j]);
+        aux[i][j] = n;
       }
     }
   }
@@ -80,6 +82,11 @@ int main() {
   for (int i = 0; i < N; i++)
     waitpid(pid[i], NULL, 0);
 
-  printf("%d\n", *ans);
+  ans = 0;
+  for (int i = 0; i < N; i++)
+    for (int j = 0; j < counter/N; j++)
+      ans += aux[i][j];
+
+  printf("%d\n", ans);
   return 0;
 }
