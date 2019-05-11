@@ -18,7 +18,7 @@ int is_prime(int n)
     return 0;
   while (i * i <= n) /* Until i = sqrt(n). */
   {
-    if (n % i == 0 || n % (i + 2) == 0) /* Divisible by i or i+2. */
+    if (n % i == 0 || n % (i + 2) == 0) /* Divisible by 6k+-1. */
       return 0;
     i += 6;
   }
