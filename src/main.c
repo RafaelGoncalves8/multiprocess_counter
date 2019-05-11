@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 
-#define N 4
+#define N 1
 #define MAX 100
 #define ERROR -1
 
@@ -33,6 +33,7 @@ int * alloc_mmap(int n)
   int visibility = MAP_SHARED | MAP_ANON;
 
   ans = (int*) mmap(NULL, sizeof(int)*n, protection, visibility, 0, 0);
+
   if ((int) ans == -1)
   {
     printf("Erro de alocacao.");
@@ -55,24 +56,18 @@ int main() {
   }
   while((c = getchar()) != '\n');
 
-  /* for (int i = 0; i < counter; i++) */
-  /*   printf("%d ", nums[i]); */
-
   for (int i = 0; i < N; i++)
   {
     pid[i] = fork();
     aux[i] = alloc_mmap(counter/N);
 
-    for (int j = 0; j < counter/N; j++)
-      *(aux[i] + j) = nums[(j+1)*i];
-
     if (pid[i] == 0)
     {
       for (int j = 0; j < counter/N; j++)
       {
-        n = is_prime(aux[i][j]);
-        printf("%d(%d) ", aux[i][j], n);
-        *(aux[i] + j) = n;
+        n = is_prime(nums[(1+i)*j]);
+        printf("%d(%d) ", nums[(1+i)*j], n);
+        aux[i][(1+i)*j] = n;
       }
       printf("\n");
       exit(0);
@@ -86,9 +81,11 @@ int main() {
   for (int i = 0; i < N; i++)
     for (int j = 0; j < counter/N; j++)
     {
-      ans += *(aux[i] + j);
-      printf("%d ", *(aux[i] + j));
+      ans += aux[i][(1+i)*j];
+      printf("%d ", aux[i][(1+i)*j]);
     }
+
+  printf("\n");
 
   printf("%d\n", ans);
   return 0;
