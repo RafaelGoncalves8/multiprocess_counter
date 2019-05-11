@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 
-#define N 1
+#define N 2
 #define MAX 100
 #define ERROR -1
 
@@ -67,7 +67,7 @@ int main() {
       {
         n = is_prime(nums[(1+i)*j]);
         printf("%d(%d) ", nums[(1+i)*j], n);
-        aux[i][(1+i)*j] = n;
+        aux[i][j] = n;
       }
       printf("\n");
       exit(0);
@@ -81,8 +81,8 @@ int main() {
   for (int i = 0; i < N; i++)
     for (int j = 0; j < counter/N; j++)
     {
-      ans += aux[i][(1+i)*j];
-      printf("%d ", aux[i][(1+i)*j]);
+      ans += aux[i][j];
+      printf("%d ", aux[i][j]);
     }
 
   printf("\n");
