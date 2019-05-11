@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 
-#define N 2
+#define N 4
 #define MAX 100
 #define ERROR -1
 
@@ -47,29 +47,37 @@ int * alloc_mmap(int n)
 int main() {
   pid_t pid[N];
   int *aux[N];
+  int *k;
   int nums[MAX];
   int n, ans, counter = 0;
   char c;
 
   do {
     scanf("%d", &nums[counter++]);
+    /* printf("%d ", nums[counter - 1]); */
   }
   while((c = getchar()) != '\n');
+
+  k = alloc_mmap(1);
 
   for (int i = 0; i < N; i++)
   {
     pid[i] = fork();
-    aux[i] = alloc_mmap(counter/N);
+    aux[i] = alloc_mmap(counter/N + 1);
 
     if (pid[i] == 0)
     {
-      for (int j = 0; j < counter/N; j++)
+      for (int j = 0; j < counter/N + 1; j++)
       {
-        n = is_prime(nums[(1+i)*j]);
-        printf("%d(%d) ", nums[(1+i)*j], n);
+        if ((i*(counter/N + 1) + j) < counter)
+          n = is_prime(nums[i*(counter/N + 1) + j]);
+        else
+          n = 0;
         aux[i][j] = n;
+        (*k) += n;
+        /* printf("%d(%d) ", nums[i*(counter/N + 1) + j], aux[i][j]); */
       }
-      printf("\n");
+      /* printf("\n"); */
       exit(0);
     }
   }
@@ -79,14 +87,15 @@ int main() {
 
   ans = 0;
   for (int i = 0; i < N; i++)
-    for (int j = 0; j < counter/N; j++)
+    for (int j = 0; j < counter/N + 1; j++)
     {
       ans += aux[i][j];
-      printf("%d ", aux[i][j]);
+      /* printf("%d ", aux[i][j]); */
     }
+  /*  */
+  /* printf("\n"); */
 
-  printf("\n");
+  printf("%d\n", (*k));
 
-  printf("%d\n", ans);
   return 0;
 }
